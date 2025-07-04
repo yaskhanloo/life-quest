@@ -2,7 +2,7 @@ import sqlite3
 import json
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-from .database import init_db, get_db
+from database import init_db, get_db
 
 # Initialize the database before the first request
 
@@ -41,7 +41,7 @@ def index():
     if user_id:
         # User is logged in, load their data (optional, might do this via API later)
         # game_data = load_user_data(user_id)
- return render_template('index.html')
+        return render_template('index.html')
 
     else:
         # User is not logged in, show a landing or login page
@@ -89,25 +89,25 @@ def login():
 
 @app.route('/load_game_data', methods=['GET'])
 def load_game_data():
- user_id = get_current_user()
- if user_id:
- game_data = load_user_data(user_id)
- if game_data is not None:
- return jsonify(game_data), 200
- else:
- # Return a default empty game data structure if none exists
- return jsonify({}), 200
- return jsonify({"error": "Unauthorized"}), 401
+    user_id = get_current_user()
+    if user_id:
+        game_data = load_user_data(user_id)
+        if game_data is not None:
+            return jsonify(game_data), 200
+        else:
+            # Return a default empty game data structure if none exists
+            return jsonify({}), 200
+    return jsonify({"error": "Unauthorized"}), 401
 
 @app.route('/save_game_data', methods=['POST'])
 def save_game_data():
- user_id = get_current_user()
- if user_id:
- game_data = request.json
- save_user_data(user_id, game_data)
- return jsonify({"message": "Game data saved successfully"}), 200
- return jsonify({"error": "Unauthorized"}), 401
+    user_id = get_current_user()
+    if user_id:
+        game_data = request.json
+        save_user_data(user_id, game_data)
+        return jsonify({"message": "Game data saved successfully"}), 200
+    return jsonify({"error": "Unauthorized"}), 401
 
 if __name__ == '__main__':
- init_db()
+    init_db()
     app.run(debug=True)

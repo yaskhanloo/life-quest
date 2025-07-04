@@ -1,4 +1,7 @@
 import sqlite3
+from flask import g, current_app
+import click
+from flask.cli import with_appcontext
 
 DATABASE = 'life_quest.db'
 
@@ -8,17 +11,38 @@ def get_db():
         db = g._database = sqlite3.connect(DATABASE)
     return db
 
-from flask import g
-
 def close_db(e=None):
     db = getattr(g, '_database', None)
     if db is not None:
         db.close()
 
 def init_db():
-    db = get_db()
-    with current_app.open_resource('schema.sql') as f:
-        db.executescript(f.read().decode('utf8'))
+    db = sqlite3.connect(DATABASE)
+    cursor = db.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            game_data TEXT DEFAULT '{}'
+        )
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS game_state (
+            user_id INTEGER PRIMARY KEY,
+            currentXP INTEGER NOT NULL DEFAULT 0,
+            currentLevel INTEGER NOT NULL DEFAULT 1,
+            dailyQuests TEXT NOT NULL,
+            weeklyQuests TEXT NOT NULL,
+            powerUps TEXT NOT NULL,
+            lastResetDate TEXT NOT NULL,
+            lastWeeklyReset TEXT,
+            startDate TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+    ''')
+    db.commit()
+    db.close()
 
 @click.command('init-db')
 @with_appcontext
@@ -32,9 +56,6 @@ def init_app(app):
     app.cli.add_command(init_db_command)
 
 # Placeholder for a schema file - we will create schema.sql next
-from flask import current_app
-import click
-from flask.cli import with_appcontext
 
 if __name__ == '__main__':
     # This part is for testing the db creation directly
