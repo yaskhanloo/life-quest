@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Quest: June Edition</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Authentication Forms (initially hidden) -->
+        <div id="authForms" class="card" style="display: none;">
+            <h2>Login / Register</h2>
+            <div id="loginForm">
+                <h3>Login</h3>
+                <input type="text" id="loginUsername" placeholder="Username">
+                <input type="password" id="loginPassword" placeholder="Password">
+                <button id="loginBtn">Login</button>
+                <p>Don't have an account? <span class="link" onclick="showRegister()">Register here</span></p>
+            </div>
+            <div id="registerForm" style="display: none;">
+                <h3>Register</h3>
+                <input type="text" id="registerUsername" placeholder="Username">
+                <input type="password" id="registerPassword" placeholder="Password">
+                <button id="registerBtn">Register</button>
+                <p>Already have an account? <span class="link" onclick="showLogin()">Login here</span></p>
+            </div>
+            <p id="authMessage" style="color: red;"></p>
+        </div>
+
+        <!-- Main App Content (initially hidden) -->
+        <!-- Header -->
+        <div class="header">
+            <h1 class="title">🎯 Life Quest: June Edition</h1>
+            <p class="subtitle">Level Up Your Life!</p>
+            <p class="days-left" id="daysLeft">Loading...</p>
+        </div>
+
+        <!-- Level and XP Display -->
+        <div class="card">
+            <div class="level-section">
+                <div class="level-info">
+                    <span>🏆</span>
+                    <div>
+                        <div class="level-number" id="levelDisplay">Level 1</div>
+                        <div class="xp-info" id="xpDisplay">Total XP: 0</div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-success" onclick="exportProgress()">📥 Export</button>
+                    <button class="btn btn-danger" onclick="resetProgress()">🔄 Reset</button>
+                </div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+            </div>
+            <p id="progressText" style="text-align: center; font-size: 0.875rem; color: #93c5fd;">0 XP to Level 2</p>
+        </div>
+
+        <!-- Daily Quests -->
+        <div class="card">
+            <div class="section-header">
+                <span>📅</span>
+                <h3 class="section-title" style="color: #22c55e;">Daily Quests (5 XP each)</h3>
+                <span class="counter" id="dailyCounter">0/8</span>
+            </div>
+
+            <div class="quest-grid" id="dailyQuests">
+                <!-- Daily quests will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Weekly Quests -->
+        <div class="card">
+            <div class="section-header">
+                <span>🎯</span>
+                <h3 class="section-title" style="color: #3b82f6;">Weekly Quests (20 XP each) - Reset Sundays</h3>
+                <span class="counter weekly" id="weeklyCounter">0/6</span>
+            </div>
+
+            <div class="quest-grid" id="weeklyQuests">
+                <!-- Weekly quests will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Power-ups -->
+        <div class="card">
+            <div class="section-header">
+                <span>⚡</span>
+                <h3 class="section-title" style="color: #a855f7;">Power-ups (Bonus XP)</h3>
+            </div>
+
+            <div class="powerup-grid" id="powerUps">
+                <!-- Power-ups will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>🎯 Max Level: 5 by June 30 • 100 XP = Level Up</p>
+            <p style="font-size: 0.75rem; margin-top: 0.5rem;">Progress saved locally in your browser</p>
+        </div>
+    </div>
+
+    <!-- Level Up Modal -->
+    <div class="level-up-modal hidden" id="levelUpModal">
+        <div class="level-up-content">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🏆</div>
+            <h2 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem;">LEVEL UP!</h2>
+            <p style="font-size: 1.25rem;" id="levelUpText">You're now Level 2!</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
