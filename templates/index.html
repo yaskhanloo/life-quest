@@ -8,25 +8,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- Authentication Forms (initially hidden) -->
-        <div id="authForms" class="card" style="display: none;">
-            <h2>Login / Register</h2>
-            <div id="loginForm">
-                <h3>Login</h3>
-                <input type="text" id="loginUsername" placeholder="Username">
-                <input type="password" id="loginPassword" placeholder="Password">
-                <button id="loginBtn">Login</button>
-                <p>Don't have an account? <span class="link" onclick="showRegister()">Register here</span></p>
-            </div>
-            <div id="registerForm" style="display: none;">
-                <h3>Register</h3>
-                <input type="text" id="registerUsername" placeholder="Username">
-                <input type="password" id="registerPassword" placeholder="Password">
-                <button id="registerBtn">Register</button>
-                <p>Already have an account? <span class="link" onclick="showLogin()">Login here</span></p>
-            </div>
-            <p id="authMessage" style="color: red;"></p>
-        </div>
 
         <!-- Main App Content (initially hidden) -->
         <!-- Header -->
@@ -34,6 +15,10 @@
             <h1 class="title">🎯 Life Quest: June Edition</h1>
             <p class="subtitle">Level Up Your Life!</p>
             <p class="days-left" id="daysLeft">Loading...</p>
+            <div class="user-info">
+                <span id="usernameDisplay"></span>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            </div>
         </div>
 
         <!-- Level and XP Display -->
@@ -112,6 +97,9 @@
         </div>
     </div>
 
+    <script>
+        const currentUsername = "{{ username }}";
+    </script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

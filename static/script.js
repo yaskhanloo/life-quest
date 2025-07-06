@@ -2,45 +2,16 @@
         let gameData = {
             currentXP: 0,
             currentLevel: 1,
-            dailyQuests: {
-                routine: false,
-                meditate: false,
-                exercise: false,
-                german: false,
-                diet: false,
-                water: false,
-                tracking: false,
-                sleep: false
-            },
-            weeklyQuests: {
-                work: false,
-                health: false,
-                germanWeekly: false,
-                reflect: false,
-                relationship: false,
-                adulting: false
-            },
-            powerUps: {
-                insight: 0,
-                serotonin: 0,
-                courage: 0,
-                mvp: 0
-            },
+            dailyQuests: {},
+            weeklyQuests: {},
+            powerUps: {},
             lastResetDate: new Date().toDateString(),
             lastWeeklyReset: null,
             startDate: new Date().toISOString().split('T')[0]
         };
 
         // Quest data
- // Authentication elements
- const loginForm = document.getElementById('loginForm');
- const registerForm = document.getElementById('registerForm');
- const gameContainer = document.querySelector('.container'); // The main game content
- const authMessage = document.getElementById('authMessage');
- const logoutButton = document.getElementById('logoutButton');
-
- // Game data structure
-        const dailyQuestData = [
+ // Quest data
             { key: 'routine', label: 'Completed the morning and evening routines', icon: '✅' },
             { key: 'meditate', label: 'Meditate or Journal (5+ minutes)', icon: '🧘‍♀️' },
             { key: 'exercise', label: 'Exercise or Walk (30+ minutes)', icon: '🏋️‍♀️' },
@@ -67,28 +38,10 @@
             { key: 'mvp', label: 'MVP Move', xp: 15, icon: '🧩', desc: 'Make quantifiable progress on a project' }
         ];
 
- // Function to get the user token (assuming stored in local storage for now)
- function getUserToken() {
- return localStorage.getItem('userToken');
- }
-
- // Function to set the user token
- function setUserToken(token) {
- localStorage.setItem('userToken', token);
- }
-
- // Function to remove the user token
- function removeUserToken() {
- localStorage.removeItem('userToken');
- }
-
  // Load data from backend
         async function loadData() {
             try {
-                const token = getUserToken();
-                const response = await fetch('/load_game_data', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+                const response = await fetch('/load_game_data');
                 if (response.ok) {
                     const savedData = await response.json();
                     gameData = { ...gameData, ...savedData };
@@ -103,12 +56,10 @@
  // Save data to backend
         async function saveData() {
             try {
-                const token = getUserToken();
                 await fetch('/save_game_data', {
                     method: 'POST',
                     headers: {
- 'Content-Type': 'application/json',
- 'Authorization': `Bearer ${token}`
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(gameData)
                 });
@@ -222,9 +173,8 @@
         function toggleDailyQuest(questKey) {
             const newState = !gameData.dailyQuests[questKey];
             gameData.dailyQuests[questKey] = newState;
- gameData.currentXP += newState ? 5 : -5; // Update XP locally first
+            gameData.currentXP += newState ? 5 : -5; // Update XP locally first
             saveData();
- await saveData(); // Ensure data is saved before rendering/updating UI
             renderQuests();
             updateUI();
         }
@@ -233,9 +183,8 @@
         function toggleWeeklyQuest(questKey) {
             const newState = !gameData.weeklyQuests[questKey];
             gameData.weeklyQuests[questKey] = newState;
- gameData.currentXP += newState ? 20 : -20; // Update XP locally first
+            gameData.currentXP += newState ? 20 : -20; // Update XP locally first
             saveData();
- await saveData(); // Ensure data is saved before rendering/updating UI
             renderQuests();
             updateUI();
         }
@@ -376,15 +325,31 @@
         }
 
         // Initialize the app
-        function init() {
-            loadData();
+        async function init() {
+            await loadData();
             checkDailyReset();
             checkWeeklyReset();
             updateDaysLeft();
             renderQuests();
             renderPowerUps();
             updateUI();
+            const usernameDisplay = document.getElementById('usernameDisplay');
+            if (usernameDisplay) {
+                usernameDisplay.textContent = 'Welcome, ' + currentUsername + '!';
+            }
         }
 
         // Start the app when page loads
         document.addEventListener('DOMContentLoaded', init);
+
+        function logout() {
+            fetch('/logout')
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/login'; // Redirect to login page after logout
+                    } else {
+                        console.error('Logout failed.');
+                    }
+                })
+                .catch(error => console.error('Error during logout:', error));
+        }

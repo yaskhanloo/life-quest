@@ -21,9 +21,20 @@ A gamified personal development tracker to level up your life! Originally design
 1.  **Clone the repository** (assuming this project is in a Git repository).
 2.  **Install Dependencies:** Make sure you have Python installed. Then install the required Python packages:
 
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-3. Start completing quests and earning XP!
-4. Reach Level 5 by June 30th
+3.  **Initialize the Database & Run the App:**
+
+    ```bash
+    python app.py
+    ```
+
+    The application will start in debug mode. Open your browser and go to `http://127.0.0.1:5000`.
+
+4.  **Start completing quests and earning XP!**
+5.  **Reach Level 5 by June 30th**
 
 ## Goal
 Transform daily habits into an engaging RPG experience and reach max level by the end of June!

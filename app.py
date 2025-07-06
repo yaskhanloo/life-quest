@@ -2,13 +2,14 @@ import sqlite3
 import json
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-from database import init_db, get_db
+from database import init_db, get_db, init_app
 
 # Initialize the database before the first request
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key' # Replace with a strong secret key
+init_app(app)
 
 # --- Helper Functions ---
 
@@ -41,7 +42,7 @@ def index():
     if user_id:
         # User is logged in, load their data (optional, might do this via API later)
         # game_data = load_user_data(user_id)
-        return render_template('index.html')
+        return render_template('index.html', username=session['username'])
 
     else:
         # User is not logged in, show a landing or login page
@@ -52,7 +53,7 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        hashed_password = generate_password_hash(password)
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
         
         db = get_db()
         cursor = db.cursor()
@@ -81,11 +82,19 @@ def login():
         
         if user and check_password_hash(user[1], password):
             session['user_id'] = user[0]
+            session['username'] = username
             return redirect(url_for('index')) # Redirect to index after successful login
         else:
             return render_template('login.html', error='Invalid username or password.')
             
-    return render_template('index.html')
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    session.pop('username', None)
+    return redirect(url_for('login'))
+
 
 @app.route('/load_game_data', methods=['GET'])
 def load_game_data():
@@ -109,5 +118,4 @@ def save_game_data():
     return jsonify({"error": "Unauthorized"}), 401
 
 if __name__ == '__main__':
-    init_db()
     app.run(debug=True)
